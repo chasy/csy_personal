@@ -2,14 +2,17 @@ package com.example.csy_personal;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +28,8 @@ public class MainActivity extends Activity {
     TextView mainText;
     int thisMonth;
     int thisYear;
+
+    int startday;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,7 @@ public class MainActivity extends Activity {
 
         //달력 세팅
         setCalendarDate(thisYear, thisMonth);
+
     }
 
     //@Override
@@ -79,7 +85,7 @@ public class MainActivity extends Activity {
         mCalToday.set(year, month - 1, 1);
 
         //빈 기간만큼 공백
-        int startday = mCalToday.get(Calendar.DAY_OF_WEEK);
+        startday = mCalToday.get(Calendar.DAY_OF_WEEK);
         if (startday != 1) {
             for (int i = 0; i < startday - 1; i++) {
                 arrData.add(null);
@@ -97,6 +103,28 @@ public class MainActivity extends Activity {
 
         mGridView = (GridView) findViewById(R.id.calGrid);
         mGridView.setAdapter(adapter);
+
+        //그리드뷰 클릭이벤트
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(android.widget.AdapterView<?> parent,
+                                    android.view.View view, int position, long id) {
+
+/*                String nowDay = thisYear + "-" + thisMonth + "-" + (position - startday + 2);
+                Toast.makeText(MainActivity.this, nowDay, Toast.LENGTH_SHORT).show();*/
+
+                if (position - startday + 2 > 0) {
+
+                    Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+                    intent.putExtra("year", String.valueOf(thisYear));
+                    intent.putExtra("month", String.valueOf(thisMonth));
+                    intent.putExtra("days", String.valueOf(position - startday + 2));
+
+                    startActivity(intent);
+                }
+            }
+
+            ;
+        });
 
         mainText.setText(year + "-" + month);
     }
@@ -131,9 +159,10 @@ public class MainActivity extends Activity {
             }
 
             TextView ViewText = (TextView) convertView.findViewById(R.id.ViewText);
-            if (arrData.get(position) == null)
+
+            if (arrData.get(position) == null) {
                 ViewText.setText("");
-            else {
+            } else {
                 ViewText.setText(arrData.get(position).getDay() + "");
                 if (arrData.get(position).getDayofweek() == 1) {
                     ViewText.setTextColor(Color.RED);
@@ -144,10 +173,16 @@ public class MainActivity extends Activity {
                 }
             }
 
-
             return convertView;
-
         }
+    }
+
+    public void goDetailPage(View v) {
+        TextView day = (TextView) findViewById(R.id.ViewText);
+
+        //String test =
+
+        Toast.makeText(MainActivity.this, day.getText(), Toast.LENGTH_SHORT).show();
     }
 
 

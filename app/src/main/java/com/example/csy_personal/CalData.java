@@ -7,6 +7,9 @@ public class CalData {
     int day;
     int dayofweek;
 
+    int year;
+    int month;
+
     public CalData(int d, int h) {
         day = d;
         dayofweek = h;
