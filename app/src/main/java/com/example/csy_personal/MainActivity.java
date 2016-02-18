@@ -173,6 +173,14 @@ public class MainActivity extends Activity {
                 }
             }
 
+            /*//오늘 날짜 색칠하게(구현해야됨)
+            int nowMonth = Calendar.MONTH;
+            int day = Calendar.DATE;
+
+            if (nowMonth + "-" + day == thisMonth + "-" + position) {
+                ViewText.setBackgroundColor(Color.YELLOW);
+            }*/
+
             return convertView;
         }
     }
@@ -184,6 +192,5 @@ public class MainActivity extends Activity {
 
         Toast.makeText(MainActivity.this, day.getText(), Toast.LENGTH_SHORT).show();
     }
-
 
 }

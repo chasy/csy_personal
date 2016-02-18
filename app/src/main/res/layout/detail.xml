@@ -47,9 +47,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="550dp"
-        android:orientation="vertical"
-        android:paddingTop="30dp">
+        android:layout_height="300dp"
+        android:orientation="vertical">
 
         <EditText
             android:layout_width="match_parent"
@@ -60,11 +59,23 @@
         <EditText
             android:layout_width="match_parent"
             android:hint="내용"
-            android:minHeight="300dp"
-            android:maxHeight="500dp"
-            android:layout_height="wrap_content"
+            android:layout_height="250dp"
             android:gravity="left"
             android:id="@+id/txtContent"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/addSchedule"
+        android:paddingRight="5px">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:id="@+id/txtScheduleCount"
+            android:textSize="20dp"
+            android:textColor="#999999"/>
 
     </LinearLayout>
 
