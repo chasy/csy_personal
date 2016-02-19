@@ -38,22 +38,22 @@ public class DbOpenHelper {
         // 버전이 업데이트 되었을 경우 DB를 다시 만들어 준다.
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS "+DataBases.CreateDB._TABLENAME);
+            db.execSQL("DROP TABLE IF EXISTS " + DataBases.CreateDB._TABLENAME);
             onCreate(db);
         }
     }
 
-    public DbOpenHelper(Context context){
+    public DbOpenHelper(Context context) {
         this.mCtx = context;
     }
 
-    public DbOpenHelper open() throws SQLException{
+    public DbOpenHelper open() throws SQLException {
         mDBHelper = new DatabaseHelper(mCtx, DATABASE_NAME, null, DATABASE_VERSION);
         mDB = mDBHelper.getWritableDatabase();
         return this;
     }
 
-    public void close(){
+    public void close() {
         mDB.close();
     }
 
@@ -66,16 +66,16 @@ public class DbOpenHelper {
             public static final String DATE = "date";
             public static final String _TABLENAME = "calender";
             public static final String _CREATE =
-                    "create table "+_TABLENAME+"("
-                            +_ID+" integer primary key autoincrement, "
-                            +TITLE+" text not null , "
-                            +CONTACT+" text not null , "
-                            +DATE+" text not null );";
+                    "create table " + _TABLENAME + "("
+                            + _ID + " integer primary key autoincrement, "
+                            + TITLE + " text not null , "
+                            + CONTACT + " text not null , "
+                            + DATE + " text not null );";
         }
     }
 
     // Insert DB
-    public long insertColumn(String title, String contact, String date){
+    public long insertColumn(String title, String contact, String date) {
         ContentValues values = new ContentValues();
         values.put(DataBases.CreateDB.TITLE, title);
         values.put(DataBases.CreateDB.CONTACT, contact);
@@ -84,51 +84,51 @@ public class DbOpenHelper {
     }
 
     // Update DB
-    public boolean updateColumn(long id , String title, String contact, String date){
+    public boolean updateColumn(long id, String title, String contact, String date) {
         ContentValues values = new ContentValues();
         values.put(DataBases.CreateDB.TITLE, title);
         values.put(DataBases.CreateDB.CONTACT, contact);
         values.put(DataBases.CreateDB.DATE, date);
-        return mDB.update(DataBases.CreateDB._TABLENAME, values, "_id="+id, null) > 0;
+        return mDB.update(DataBases.CreateDB._TABLENAME, values, "_id=" + String.valueOf(id), null) > 0;
     }
 
     // Delete ID
-    public boolean deleteColumn(long id){
+    public boolean deleteColumn(long id) {
         return mDB.delete(DataBases.CreateDB._TABLENAME, "_id=" + id, null) > 0;
     }
 
     // Delete Contact
-    public boolean deleteColumn(String number){
-        return mDB.delete(DataBases.CreateDB._TABLENAME, "contact="+number, null) > 0;
+    public boolean deleteColumn(String number) {
+        return mDB.delete(DataBases.CreateDB._TABLENAME, "contact=" + number, null) > 0;
     }
 
     // Select All
-    public Cursor getAllColumns(){
+    public Cursor getAllColumns() {
         return mDB.query(DataBases.CreateDB._TABLENAME, null, null, null, null, null, null);
     }
 
     // ID 컬럼 얻어 오기
-    public Cursor getColumn(long id){
+    public Cursor getColumn(long id) {
         Cursor c = mDB.query(DataBases.CreateDB._TABLENAME, null,
-                "_id="+id, null, null, null, null);
-        if(c != null && c.getCount() != 0)
+                "_id=" + id, null, null, null, null);
+        if (c != null && c.getCount() != 0)
             c.moveToFirst();
         return c;
     }
 
     // 이름 검색 하기 (rawQuery)
-    public Cursor getMatchName(String name){
+    public Cursor getMatchName(String name) {
         Cursor c = mDB.rawQuery("select * from calender where name=" + "'" + name + "'", null);
         return c;
     }
 
-    public Cursor getTodaySchedule(String Date){
-        Cursor c = mDB.rawQuery("select * from calender where date = '" + Date +"'", null);
+    public Cursor getTodaySchedule(String Date) {
+        Cursor c = mDB.rawQuery("select * from calender where date = '" + Date + "'", null);
         return c;
     }
 
-    public Cursor getScheduleByNo(int no){
-        Cursor c = mDB.rawQuery("select * from calender where _id = " + no +"", null);
+    public Cursor getScheduleByNo(long no) {
+        Cursor c = mDB.rawQuery("select * from calender where _id = " + no + "", null);
         return c;
     }
 

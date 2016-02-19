@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +46,10 @@ public class DetailActivity extends Activity {
         TextView textView = (TextView) findViewById(R.id.lblNowDay);
         textView.setText(strDate);
 
-        list = getTodaySchedule(strDate);
+        DBHelper = new DbOpenHelper(this);
+        DBHelper.open();
+
+        /*list = getTodaySchedule(strDate);
 
         TextView txtScheduleCount = (TextView) findViewById(R.id.txtScheduleCount);
         txtScheduleCount.setText(list.size() + "개의 스케줄이 있음");
@@ -70,8 +72,8 @@ public class DetailActivity extends Activity {
                     @Override
                     public void onClick(View v) {
 
-                        DBHelper = new DbOpenHelper(DetailActivity.this);
-                        DBHelper.open();
+                        *//*DBHelper = new DbOpenHelper(DetailActivity.this);
+                        DBHelper.open();*//*
 
                         list = new ArrayList<CalendarT>();
 
@@ -98,11 +100,12 @@ public class DetailActivity extends Activity {
                 });
                 addSchedule.addView(addTitle);
             }
-        }
+        }*/
     }
 
     public void btnBack(View v) {
-        finish();
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
     }
 
     public void btnSave(View v) {
@@ -111,15 +114,17 @@ public class DetailActivity extends Activity {
         EditText content = (EditText) findViewById(R.id.txtContent);
         TextView nowday = (TextView) findViewById(R.id.lblNowDay);
 
-        DBHelper = new DbOpenHelper(this);
-        DBHelper.open();
+        /*DBHelper = new DbOpenHelper(this);
+        DBHelper.open();*/
 
         long seq = DBHelper.insertColumn(title.getText().toString(), content.getText().toString(), nowday.getText().toString());
 
         DBHelper.close();
 
         Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show();
-        finish();
+
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
 
         //테스트로 저장
         /*final String fileName = nowday.getText().toString();
@@ -169,8 +174,8 @@ public class DetailActivity extends Activity {
     }
 
     public void getAllSchedule() {
-        DBHelper = new DbOpenHelper(this);
-        DBHelper.open();
+        /*DBHelper = new DbOpenHelper(this);
+        DBHelper.open();*/
 
         mCursor = DBHelper.getAllColumns();
         try {
@@ -194,8 +199,8 @@ public class DetailActivity extends Activity {
 
     public ArrayList<CalendarT> getTodaySchedule(String date) {
 
-        DBHelper = new DbOpenHelper(this);
-        DBHelper.open();
+        /*DBHelper = new DbOpenHelper(this);
+        DBHelper.open();*/
 
         list = new ArrayList<CalendarT>();
 

@@ -3,6 +3,7 @@ package com.example.csy_personal;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import java.util.Calendar;
 
 public class MainActivity extends Activity {
 
+    public DbOpenHelper DBHelper;
     GridView mGridView;
     DateAdepter adapter;
     ArrayList<CalData> arrData;
@@ -28,8 +32,12 @@ public class MainActivity extends Activity {
     TextView mainText;
     int thisMonth;
     int thisYear;
-
     int startday;
+
+    CalendarT cData;
+    ArrayList<CalendarT> list;
+    Cursor mCursor;
+    String strDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,8 @@ public class MainActivity extends Activity {
         //달력 세팅
         setCalendarDate(thisYear, thisMonth);
 
+        DBHelper = new DbOpenHelper(MainActivity.this);
+        DBHelper.open();
     }
 
     //@Override
@@ -109,21 +119,73 @@ public class MainActivity extends Activity {
             public void onItemClick(android.widget.AdapterView<?> parent,
                                     android.view.View view, int position, long id) {
 
-/*                String nowDay = thisYear + "-" + thisMonth + "-" + (position - startday + 2);
-                Toast.makeText(MainActivity.this, nowDay, Toast.LENGTH_SHORT).show();*/
-
                 if (position - startday + 2 > 0) {
 
+                  /*  //날짜 클릭시 페이지 이동
                     Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                     intent.putExtra("year", String.valueOf(thisYear));
                     intent.putExtra("month", String.valueOf(thisMonth));
                     intent.putExtra("days", String.valueOf(position - startday + 2));
 
-                    startActivity(intent);
-                }
-            }
+                    startActivity(intent);*/
 
-            ;
+                    //날짜 클릭시 내용 보이기
+                    list = getTodaySchedule(thisYear + "-" + thisMonth + "-" + (position - startday + 2));
+
+                    final int extDay = (position - startday + 2);
+
+                    LinearLayout todayLayout = (LinearLayout) findViewById(R.id.layTodaySchedule);
+                    todayLayout.removeAllViews();
+
+                    Button btnAddSchedule = new Button(MainActivity.this);
+                    btnAddSchedule.setText("일정추가");
+                    btnAddSchedule.setWidth(50);
+                    btnAddSchedule.setHeight(50);
+                    btnAddSchedule.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MainActivity.this,DetailActivity.class);
+
+                            intent.putExtra("year", String.valueOf(thisYear));
+                            intent.putExtra("month", String.valueOf(thisMonth));
+                            intent.putExtra("days", String.valueOf(extDay));
+
+                            startActivity(intent);
+                        }
+                    });
+
+                    todayLayout.addView(btnAddSchedule);
+
+                    if (list.size() > 0) {
+                        CalendarT data;
+                        for (int i = 0; i < list.size(); i++) {
+                            data = list.get(i);
+
+                            final int no = data._id;
+
+                            //텍스트 생성
+                            TextView addTitle = new TextView(MainActivity.this);
+                            addTitle.setText(data.title);
+                            addTitle.setTextSize(30);
+                            addTitle.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DBHelper.close();
+                                    Intent intent = new Intent(getApplicationContext(), editSchedule.class);
+                                    intent.putExtra("year", String.valueOf(thisYear));
+                                    intent.putExtra("month", String.valueOf(thisMonth));
+                                    intent.putExtra("days", String.valueOf(extDay));
+                                    intent.putExtra("no", no);
+
+                                    startActivity(intent);
+
+                                }
+                            });
+                            todayLayout.addView(addTitle);
+                        }
+                    }
+                }
+            };
         });
 
         mainText.setText(year + "-" + month);
@@ -191,6 +253,29 @@ public class MainActivity extends Activity {
         //String test =
 
         Toast.makeText(MainActivity.this, day.getText(), Toast.LENGTH_SHORT).show();
+    }
+
+    public ArrayList<CalendarT> getTodaySchedule(String date) {
+
+        /*DBHelper = new DbOpenHelper(this);
+        DBHelper.open();*/
+
+        list = new ArrayList<CalendarT>();
+
+        mCursor = DBHelper.getTodaySchedule(date);
+
+        while (mCursor.moveToNext()) {
+
+            cData = new CalendarT(
+                    mCursor.getInt(mCursor.getColumnIndex("_id")),
+                    mCursor.getString(mCursor.getColumnIndex("title")),
+                    mCursor.getString(mCursor.getColumnIndex("contact")),
+                    mCursor.getString(mCursor.getColumnIndex("date"))
+            );
+            list.add(cData);
+        }
+
+        return list;
     }
 
 }
