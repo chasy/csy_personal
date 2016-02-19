@@ -104,8 +104,9 @@ public class DetailActivity extends Activity {
     }
 
     public void btnBack(View v) {
-        Intent intent = new Intent(this,MainActivity.class);
-        startActivity(intent);
+        /*Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);*/
+        finish();
     }
 
     public void btnSave(View v) {

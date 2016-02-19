@@ -132,4 +132,15 @@ public class DbOpenHelper {
         return c;
     }
 
+    public int getTodayScheduleCount(String date) {
+        String query = "select count(0) from " + DataBases.CreateDB._TABLENAME + " where date = '" + date + "'";
+        Cursor cursor = mDB.rawQuery(query, null);
+        int cnt = 0;
+        if (null != cursor)
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                cnt = cursor.getInt(0);
+            }
+        return cnt;
+    }
 }

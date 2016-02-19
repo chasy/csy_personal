@@ -39,6 +39,13 @@ public class MainActivity extends Activity {
     Cursor mCursor;
     String strDate;
 
+
+    private final long FINSH_INTERVAL_TIME = 2000;
+    private long backPressedTime = 0;
+
+
+    private BackPressCloseHandler backPressCloseHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +64,30 @@ public class MainActivity extends Activity {
         //달력 세팅
         setCalendarDate(thisYear, thisMonth);
 
+        //backPressCloseHandler = new BackPressCloseHandler(this);
+
         DBHelper = new DbOpenHelper(MainActivity.this);
         DBHelper.open();
     }
+
+    @Override
+    public void onBackPressed() {
+        long tempTime = System.currentTimeMillis();
+        long intervalTime = tempTime - backPressedTime;
+
+        if (0 <= intervalTime && FINSH_INTERVAL_TIME >= intervalTime) {
+            super.onBackPressed();
+        } else {
+            backPressedTime = tempTime;
+            Toast.makeText(getApplicationContext(), "'뒤로'버튼을한번더누르시면종료됩니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /*@Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        backPressCloseHandler.onBackPressed();
+    }*/
 
     //@Override
     public void onClick(View v) {
@@ -129,13 +157,22 @@ public class MainActivity extends Activity {
 
                     startActivity(intent);*/
 
+
+                    strDate = thisYear + "-" + thisMonth + "-" + (position - startday + 2);
                     //날짜 클릭시 내용 보이기
-                    list = getTodaySchedule(thisYear + "-" + thisMonth + "-" + (position - startday + 2));
+                    list = getTodaySchedule(strDate);
 
                     final int extDay = (position - startday + 2);
 
                     LinearLayout todayLayout = (LinearLayout) findViewById(R.id.layTodaySchedule);
                     todayLayout.removeAllViews();
+
+                    //int cnt = DBHelper.getTodayScheduleCount(strDate);
+
+                    TextView txtScheduleCount = new TextView(MainActivity.this);
+                    txtScheduleCount.setTextSize(15);
+                    txtScheduleCount.setText(list.size() + "개의 스케줄이 있음");
+                    todayLayout.addView(txtScheduleCount);
 
                     Button btnAddSchedule = new Button(MainActivity.this);
                     btnAddSchedule.setText("일정추가");
@@ -144,7 +181,7 @@ public class MainActivity extends Activity {
                     btnAddSchedule.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(MainActivity.this,DetailActivity.class);
+                            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
 
                             intent.putExtra("year", String.valueOf(thisYear));
                             intent.putExtra("month", String.valueOf(thisMonth));
@@ -185,7 +222,9 @@ public class MainActivity extends Activity {
                         }
                     }
                 }
-            };
+            }
+
+            ;
         });
 
         mainText.setText(year + "-" + month);
@@ -233,18 +272,20 @@ public class MainActivity extends Activity {
                 } else {
                     ViewText.setTextColor(Color.BLACK);
                 }
+
+                //오늘 날짜 색칠하게(구현해야됨)
+                int nowMonth = Calendar.MONTH;
+                int day = Calendar.DATE;
+
+//                if (nowMonth + "-" + day == thisMonth + "-" + arrData.get(position).getDay()) {
+                if ((nowMonth + "-" + day).equals((thisMonth + "-" + arrData.get(position).getDay()))) {
+                    ViewText.setBackgroundColor(Color.GREEN);
+                }
             }
-
-            /*//오늘 날짜 색칠하게(구현해야됨)
-            int nowMonth = Calendar.MONTH;
-            int day = Calendar.DATE;
-
-            if (nowMonth + "-" + day == thisMonth + "-" + position) {
-                ViewText.setBackgroundColor(Color.YELLOW);
-            }*/
 
             return convertView;
         }
+
     }
 
     public void goDetailPage(View v) {
