@@ -22,6 +22,8 @@ import java.util.Calendar;
 
 public class MainActivity extends Activity {
 
+    private ActivityManager actManager = ActivityManager.getInstance();
+
     public DbOpenHelper DBHelper;
     GridView mGridView;
     DateAdepter adapter;
@@ -39,6 +41,10 @@ public class MainActivity extends Activity {
     Cursor mCursor;
     String strDate;
 
+    int realNowYear;
+    int realNowMonth;
+    int realNowDay;
+
 
     private final long FINSH_INTERVAL_TIME = 2000;
     private long backPressedTime = 0;
@@ -51,6 +57,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        actManager.addActivity(this);
+
         //캘린더 객체 생성
         mCal = Calendar.getInstance();
         mCalToday = Calendar.getInstance();
@@ -60,6 +68,12 @@ public class MainActivity extends Activity {
         mainText = (TextView) findViewById(R.id.maintext);
         thisYear = mCal.get(Calendar.YEAR);
         thisMonth = mCal.get(Calendar.MONTH) + 1;
+
+        //오늘 날짜 색칠하게
+        realNowYear = mCal.get(Calendar.YEAR);
+        realNowMonth = mCal.get(Calendar.MONTH) + 1;
+        realNowDay = mCal.get(Calendar.DATE);
+
 
         //달력 세팅
         setCalendarDate(thisYear, thisMonth);
@@ -76,12 +90,44 @@ public class MainActivity extends Activity {
         long intervalTime = tempTime - backPressedTime;
 
         if (0 <= intervalTime && FINSH_INTERVAL_TIME >= intervalTime) {
-            super.onBackPressed();
+            /*moveTaskToBack(true);
+            finish();
+            android.os.Process.killProcess(android.os.Process.myPid() );*/
+            actManager.finishAllActivity();
+
         } else {
             backPressedTime = tempTime;
             Toast.makeText(getApplicationContext(), "'뒤로'버튼을한번더누르시면종료됩니다.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    /*@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("종료")
+                    .setMessage("종료할꺼냐?")
+                    .setPositiveButton("응"
+                            ,
+                            new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick( DialogInterface dialog, int which )
+                                {
+                                    moveTaskToBack(true);
+                                    finish();
+                                }
+                            }
+                    ).setNegativeButton("아니", null).show();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }*/
+
+
 
     /*@Override
     public void onBackPressed() {
@@ -273,12 +319,8 @@ public class MainActivity extends Activity {
                     ViewText.setTextColor(Color.BLACK);
                 }
 
-                //오늘 날짜 색칠하게(구현해야됨)
-                int nowMonth = Calendar.MONTH;
-                int day = Calendar.DATE;
-
 //                if (nowMonth + "-" + day == thisMonth + "-" + arrData.get(position).getDay()) {
-                if ((nowMonth + "-" + day).equals((thisMonth + "-" + arrData.get(position).getDay()))) {
+                if ((realNowYear + "-" + realNowMonth + "-" + realNowDay).equals((thisYear + "-" + thisMonth + "-" + arrData.get(position).getDay()))) {
                     ViewText.setBackgroundColor(Color.GREEN);
                 }
             }
@@ -319,4 +361,27 @@ public class MainActivity extends Activity {
         return list;
     }
 
+    /*@Override
+    public void onDestroy() {
+        super.onDestroy();
+        clearApplicationCache(null);
+        android.os.Process.killProcess(android.os.Process.myPid() );
+    }
+
+    //종료시 모든 캐쉬 삭제
+    public void clearApplicationCache(java.io.File dir){
+        if(dir==null) dir = getCacheDir();
+        if(dir==null) return;
+        java.io.File[] children = dir.listFiles();
+        try{
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.removeSessionCookie();
+
+            for(int i=0;i<children.length;i++)
+                if(children[i].isDirectory())
+                    clearApplicationCache(children[i]);
+                else children[i].delete();
+        }
+        catch(Exception e){}
+    }*/
 }

@@ -19,6 +19,8 @@ import java.util.ArrayList;
  */
 public class DetailActivity extends Activity {
 
+    private ActivityManager actManager = ActivityManager.getInstance();
+
     private DbOpenHelper DBHelper;
     String year;
     String month;
@@ -32,6 +34,8 @@ public class DetailActivity extends Activity {
     protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.detail);
+
+        actManager.addActivity(this);
 
         Intent intent = getIntent();
         list = new ArrayList<CalendarT>();
@@ -118,16 +122,20 @@ public class DetailActivity extends Activity {
         /*DBHelper = new DbOpenHelper(this);
         DBHelper.open();*/
 
-        long seq = DBHelper.insertColumn(title.getText().toString(), content.getText().toString(), nowday.getText().toString());
+        if (title.getText().length() == 0 || content.getText().length() == 0) {
+            Toast.makeText(this, "제목과 내용은 필수입니다.", Toast.LENGTH_SHORT).show();
+        } else {
 
-        DBHelper.close();
+            long seq = DBHelper.insertColumn(title.getText().toString(), content.getText().toString(), nowday.getText().toString());
 
-        Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show();
+            DBHelper.close();
 
-        Intent intent = new Intent(this,MainActivity.class);
-        startActivity(intent);
+            Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show();
 
-        //테스트로 저장
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+
+            //테스트로 저장
         /*final String fileName = nowday.getText().toString();
 
         try{
@@ -144,6 +152,7 @@ public class DetailActivity extends Activity {
         finally {
 
         }*/
+        }
 
     }
 

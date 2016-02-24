@@ -16,6 +16,7 @@ import java.util.ArrayList;
  */
 public class editSchedule extends Activity {
 
+    private ActivityManager actManager = ActivityManager.getInstance();
 
     private DbOpenHelper DBHelper;
     String year;
@@ -33,6 +34,8 @@ public class editSchedule extends Activity {
 
         super.onCreate(SaveInstanseState);
         setContentView(R.layout.edit_schedule);
+
+        actManager.addActivity(this);
 
         Intent intent = getIntent();
         //list = new ArrayList<CalendarT>();
@@ -79,17 +82,23 @@ public class editSchedule extends Activity {
         EditText content = (EditText) findViewById(R.id.editContent);
         TextView nowday = (TextView) findViewById(R.id.editNowDay);
 
+        if (title.getText().length() == 0 || content.getText().length() == 0) {
+            Toast.makeText(this, "제목과 내용은 필수입니다.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+
         /*DBHelper = new DbOpenHelper(this);
         DBHelper.open();*/
 
-        DBHelper.updateColumn(no, title.getText().toString(), content.getText().toString(), nowday.getText().toString());
+            DBHelper.updateColumn(no, title.getText().toString(), content.getText().toString(), nowday.getText().toString());
 
-        DBHelper.close();
+            DBHelper.close();
 
-        Toast.makeText(this, "수정되었습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "수정되었습니다.", Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(this,MainActivity.class);
-        startActivity(intent);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void btnCancle(View v) {
