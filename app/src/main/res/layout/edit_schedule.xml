@@ -65,6 +65,33 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TimePicker
+            android:id="@+id/time_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="left"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="알람저장"
+                android:layout_gravity="left"
+                android:onClick="setAlarm"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 </LinearLayout>

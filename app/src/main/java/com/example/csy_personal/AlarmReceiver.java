@@ -17,7 +17,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         vide = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         vide.vibrate(1000);
 

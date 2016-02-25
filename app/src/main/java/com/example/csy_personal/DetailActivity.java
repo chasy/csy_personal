@@ -273,7 +273,7 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
         //임시로 3초뒤에 울리게 해서 테스트중
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.SECOND, 1);
+        calendar.add(Calendar.SECOND, 5);
 
         Date date = mCalendar.getTime();
         SimpleDateFormat sFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -288,7 +288,7 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
 
         //알람객체생성
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender);
+        mManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
         //mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender);
     }
 

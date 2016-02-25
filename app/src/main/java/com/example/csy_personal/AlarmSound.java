@@ -7,6 +7,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -22,6 +23,12 @@ public class AlarmSound extends Activity {
     @Override
     public void onCreate(Bundle SaveInstanceState) {
         super.onCreate(SaveInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
         setContentView(R.layout.alarm);
 
         actManager.addActivity(this);
@@ -46,7 +53,7 @@ public class AlarmSound extends Activity {
             // STREAM_VOICE_CALL 은 전화-수신 스피커를 사용한다.
             mPlayer.setAudioStreamType(AudioManager.STREAM_RING);
 
-            mPlayer.setLooping(true);  // 반복여부 지정
+            mPlayer.setLooping(true);  // 반복여부 지정-
             mPlayer.prepare();    // 실행전 준비
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,5 +64,6 @@ public class AlarmSound extends Activity {
     public void stopAlram(View v){
         mPlayer.stop();
         actManager.finishAllActivity();
+        finish();
     }
 }
