@@ -47,7 +47,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <EditText
@@ -63,7 +63,53 @@
             android:gravity="left"
             android:id="@+id/txtContent"/>
 
+        <Button android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:id="@+id/btnTest"
+            android:onClick="setAlarm"
+            android:text="테스트"></Button>
+
+        <Button android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:id="@+id/btnTestReset"
+            android:onClick="resetAlarm"
+            android:text="전부 삭제"></Button>
+
+        <Button android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:id="@+id/btnStopAlram"
+            android:onClick="stopAlram"
+            android:text="알람중지"></Button>
+
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TimePicker
+            android:id="@+id/time_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="left"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="set"
+                android:layout_gravity="left"
+                android:onClick="setAlarm"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
