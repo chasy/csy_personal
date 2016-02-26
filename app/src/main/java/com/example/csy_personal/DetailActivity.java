@@ -10,16 +10,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
 import android.widget.Toast;
 
 import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 
@@ -87,63 +86,9 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
         mTime.setCurrentMinute(mCalendar.get(Calendar.MINUTE));
         mTime.setOnTimeChangedListener(this);
 
-        /*list = getTodaySchedule(strDate);
-
-        TextView txtScheduleCount = (TextView) findViewById(R.id.txtScheduleCount);
-        txtScheduleCount.setText(list.size() + "개의 스케줄이 있음");
-        //ReadFile();
-
-        if (list.size() > 0) {
-            CalendarT data;
-            LinearLayout addSchedule = (LinearLayout) findViewById(R.id.addSchedule);
-
-            for (int i = 0; i < list.size(); i++) {
-                data = list.get(i);
-
-                final int no = data._id;
-
-                //텍스트 생성
-                TextView addTitle = new TextView(this);
-                addTitle.setText(data.title);
-                addTitle.setTextSize(30);
-                addTitle.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        *//*DBHelper = new DbOpenHelper(DetailActivity.this);
-                        DBHelper.open();*//*
-
-                        list = new ArrayList<CalendarT>();
-
-                        mCursor = DBHelper.getScheduleByNo(no);
-
-                        while (mCursor.moveToNext()) {
-
-                            cData = new CalendarT(
-                                    mCursor.getInt(mCursor.getColumnIndex("_id")),
-                                    mCursor.getString(mCursor.getColumnIndex("title")),
-                                    mCursor.getString(mCursor.getColumnIndex("contact")),
-                                    mCursor.getString(mCursor.getColumnIndex("date"))
-                            );
-                        }
-                        DBHelper.close();
-
-                        EditText title = (EditText) findViewById(R.id.txtTitle);
-                        EditText content = (EditText) findViewById(R.id.txtContent);
-                        title.setText(cData.title);
-                        content.setText(cData.contact);
-
-
-                    }
-                });
-                addSchedule.addView(addTitle);
-            }
-        }*/
     }
 
     public void btnBack(View v) {
-        /*Intent intent = new Intent(this,MainActivity.class);
-        startActivity(intent);*/
         finish();
     }
 
@@ -153,40 +98,34 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
         EditText content = (EditText) findViewById(R.id.txtContent);
         TextView nowday = (TextView) findViewById(R.id.lblNowDay);
 
-        /*DBHelper = new DbOpenHelper(this);
-        DBHelper.open();*/
+        LinearLayout layout = (LinearLayout) findViewById(R.id.laySetAlarm);
+        int visibility = layout.getVisibility(); //0 = visible , 8 = gone
+
+        int hour = mCalendar.get(Calendar.HOUR);
+        int minute = mCalendar.get(Calendar.MINUTE);
+        int isam = mCalendar.get(Calendar.AM_PM); //0 = am, 1 = pm
+        String strIsam = isam == 0 ? "Y" : "N";
+        String alarmYn = visibility==0? "Y":"N";
 
         if (title.getText().length() == 0 || content.getText().length() == 0) {
             Toast.makeText(this, "제목과 내용은 필수입니다.", Toast.LENGTH_SHORT).show();
         } else {
 
-            long seq = DBHelper.insertColumn(title.getText().toString(), content.getText().toString(), nowday.getText().toString());
+            long seq = DBHelper.insertColumn(title.getText().toString(), content.getText().toString(), nowday.getText().toString(), hour, minute, strIsam, alarmYn);
 
             DBHelper.close();
+
+            //알람 추가 했을경우에만 동작
+            if (visibility == 0) {
+                setAlarm();
+            }
 
             Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-
-            //테스트로 저장
-        /*final String fileName = nowday.getText().toString();
-
-        try{
-            FileOutputStream fos = openFileOutput(fileName,Context.MODE_PRIVATE);
-            String str = content.getText().toString();
-            fos.write(str.getBytes());
-            fos.close();
-            Toast.makeText(this,"저장되었습니다.",Toast.LENGTH_SHORT).show();
-            finish();;
         }
-        catch(Exception e){
-            Toast.makeText(this,"에러!!",Toast.LENGTH_SHORT).show();
-        }
-        finally {
 
-        }*/
-        }
 
     }
 
@@ -229,7 +168,11 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
                         mCursor.getInt(mCursor.getColumnIndex("_id")),
                         mCursor.getString(mCursor.getColumnIndex("title")),
                         mCursor.getString(mCursor.getColumnIndex("contact")),
-                        mCursor.getString(mCursor.getColumnIndex("date"))
+                        mCursor.getString(mCursor.getColumnIndex("date")),
+                        mCursor.getInt(mCursor.getColumnIndex("hour")),
+                        mCursor.getInt(mCursor.getColumnIndex("minute")),
+                        mCursor.getString(mCursor.getColumnIndex("isam")),
+                        mCursor.getString(mCursor.getColumnIndex("alarmyn"))
                 );
                 list.add(cData);
             }
@@ -243,9 +186,6 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
 
     public ArrayList<CalendarT> getTodaySchedule(String date) {
 
-        /*DBHelper = new DbOpenHelper(this);
-        DBHelper.open();*/
-
         list = new ArrayList<CalendarT>();
 
         mCursor = DBHelper.getTodaySchedule(date);
@@ -256,7 +196,12 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
                     mCursor.getInt(mCursor.getColumnIndex("_id")),
                     mCursor.getString(mCursor.getColumnIndex("title")),
                     mCursor.getString(mCursor.getColumnIndex("contact")),
-                    mCursor.getString(mCursor.getColumnIndex("date"))
+                    mCursor.getString(mCursor.getColumnIndex("date")),
+                    mCursor.getInt(mCursor.getColumnIndex("hour")),
+                    mCursor.getInt(mCursor.getColumnIndex("minute")),
+                    mCursor.getString(mCursor.getColumnIndex("isam")),
+                    mCursor.getString(mCursor.getColumnIndex("alarmyn"))
+
             );
             list.add(cData);
         }
@@ -265,31 +210,52 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
     }
 
     //알람의 설정
-    public void setAlarm(View v) {
-        // 알람 매니저에 등록할 인텐트를 만듬
-        Intent intent = new Intent(DetailActivity.this, AlarmReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(DetailActivity.this, 0, intent, 0);
+    public void setAlarm() {
+        Calendar nowTIme = Calendar.getInstance();
+        nowTIme.setTimeInMillis(System.currentTimeMillis());
 
-        //임시로 3초뒤에 울리게 해서 테스트중
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.SECOND, 5);
+        if(nowTIme.getTimeInMillis() - mCalendar.getTimeInMillis() < 0) {
 
-        Date date = mCalendar.getTime();
-        SimpleDateFormat sFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String fDate = sFormat.format(date);
+            // 알람 매니저에 등록할 인텐트를 만듬
+            Intent intent = new Intent(DetailActivity.this, AlarmReceiver.class);
+            PendingIntent sender = PendingIntent.getBroadcast(DetailActivity.this, 0, intent, 0);
 
-        Date date2 = calendar.getTime();
-        SimpleDateFormat sFormat2 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String fDate2 = sFormat2.format(date2);
+            /*//임시로 3초뒤에 울리게 해서 테스트중
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.add(Calendar.SECOND, 5);*/
+
+            /*Date date = mCalendar.getTime();
+            SimpleDateFormat sFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String fDate = sFormat.format(date);
+
+            Date date2 = calendar.getTime();
+            SimpleDateFormat sFormat2 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String fDate2 = sFormat2.format(date2);
 
 
-        Toast.makeText(this, fDate + "에 알람 등록", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, fDate + "에 알람 등록", Toast.LENGTH_SHORT).show();*/
 
-        //알람객체생성
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        mManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-        //mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender);
+            //알람객체생성
+            mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender);
+            //mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), sender);
+        }
+    }
+
+    public void btnShowSetAlarm(View v) {
+        LinearLayout hideLay = (LinearLayout) findViewById(R.id.layHideSetAlarm);
+        hideLay.setVisibility(View.GONE);
+
+        LinearLayout layout = (LinearLayout) findViewById(R.id.laySetAlarm);
+        layout.setVisibility(View.VISIBLE);
+    }
+
+    public void btnCancleAlarm(View v) {
+        LinearLayout hideLay = (LinearLayout) findViewById(R.id.layHideSetAlarm);
+        hideLay.setVisibility(View.VISIBLE);
+
+        LinearLayout layout = (LinearLayout) findViewById(R.id.laySetAlarm);
+        layout.setVisibility(View.GONE);
     }
 
     //알람의 해제
@@ -305,16 +271,9 @@ public class DetailActivity extends Activity implements OnTimeChangedListener {
         return pi;
     }
 
-   /* //일자 설정 클래스의 상태변화 리스너
-    public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        mCalendar.set(year, monthOfYear, dayOfMonth, mTime.getCurrentHour(), mTime.getCurrentMinute());
-        //Log.i("HelloAlarmActivity", mCalendar.getTime().toString());
-    }*/
-
     //시각 설정 클래스의 상태변화 리스너
     public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
         mCalendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(days), hourOfDay, minute, 0);
-        //Log.i("HelloAlarmActivity",mCalendar.getTime().toString());
     }
 
 }

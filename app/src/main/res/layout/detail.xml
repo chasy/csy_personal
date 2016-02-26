@@ -11,9 +11,9 @@
         <Button
             android:layout_width="70dp"
             android:layout_height="50dp"
+            android:gravity="center"
             android:onClick="btnBack"
             android:paddingLeft="20dp"
-            android:gravity="center"
             android:text="뒤로" />
 
         <LinearLayout
@@ -37,10 +37,10 @@
         <Button
             android:layout_width="70dp"
             android:layout_height="50dp"
-            android:paddingRight="20dp"
             android:gravity="center"
-            android:text="저장"
-            android:onClick="btnSave"/>
+            android:onClick="btnSave"
+            android:paddingRight="20dp"
+            android:text="저장" />
 
     </LinearLayout>
 
@@ -51,63 +51,71 @@
         android:orientation="vertical">
 
         <EditText
+            android:id="@+id/txtTitle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="제목"
-            android:id="@+id/txtTitle"/>
+            android:hint="제목" />
 
         <EditText
+            android:id="@+id/txtContent"
             android:layout_width="match_parent"
-            android:hint="내용"
-            android:layout_height="250dp"
+            android:layout_height="150dp"
             android:gravity="left"
-            android:id="@+id/txtContent"/>
+            android:hint="내용" />
 
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:gravity="left"
+        android:id="@+id/layHideSetAlarm"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnAddAlarm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="btnShowSetAlarm"
+            android:layout_gravity="right"
+            android:text="알람추가"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/laySetAlarm"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TimePicker
             android:id="@+id/time_picker"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <LinearLayout
-            android:orientation="vertical"
-            android:gravity="left"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" />
 
-            <Button
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:orientation="vertical">
+
+            <!--<Button
                 android:id="@+id/set"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="알람저장"
                 android:layout_gravity="left"
-                android:onClick="setAlarm"/>
+                android:onClick="setAlarm"
+                android:text="알람저장" />-->
 
+            <Button
+                android:id="@+id/btnCancleAlarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="btnCancleAlarm"
+                android:text="취소" />
         </LinearLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/addSchedule"
-        android:paddingRight="5px">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:id="@+id/txtScheduleCount"
-            android:textSize="20dp"
-            android:textColor="#999999"/>
-
-    </LinearLayout>
-
 
 </LinearLayout>

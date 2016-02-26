@@ -353,12 +353,43 @@ public class MainActivity extends Activity {
                     mCursor.getInt(mCursor.getColumnIndex("_id")),
                     mCursor.getString(mCursor.getColumnIndex("title")),
                     mCursor.getString(mCursor.getColumnIndex("contact")),
-                    mCursor.getString(mCursor.getColumnIndex("date"))
+                    mCursor.getString(mCursor.getColumnIndex("date")),
+                    mCursor.getInt(mCursor.getColumnIndex("hour")),
+                    mCursor.getInt(mCursor.getColumnIndex("minute")),
+                    mCursor.getString(mCursor.getColumnIndex("isam")),
+                    mCursor.getString(mCursor.getColumnIndex("alarmyn"))
             );
             list.add(cData);
         }
 
         return list;
+    }
+
+    public void btnTest(View v){
+        list = new ArrayList<CalendarT>();
+
+        mCursor = DBHelper.getAllColumns();
+
+        while (mCursor.moveToNext()) {
+
+            cData = new CalendarT(
+                    mCursor.getInt(mCursor.getColumnIndex("_id")),
+                    mCursor.getString(mCursor.getColumnIndex("title")),
+                    mCursor.getString(mCursor.getColumnIndex("contact")),
+                    mCursor.getString(mCursor.getColumnIndex("date")),
+                    mCursor.getInt(mCursor.getColumnIndex("hour")),
+                    mCursor.getInt(mCursor.getColumnIndex("minute")),
+                    mCursor.getString(mCursor.getColumnIndex("isam")),
+                    mCursor.getString(mCursor.getColumnIndex("alarmyn"))
+
+            );
+            list.add(cData);
+        }
+    }
+
+    public void deleteAll(View v){
+        DBHelper.deleteAll();
+        Toast.makeText(this,"삭제되었다",Toast.LENGTH_SHORT).show();
     }
 
     /*@Override

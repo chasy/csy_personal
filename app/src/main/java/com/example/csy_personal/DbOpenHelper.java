@@ -64,31 +64,47 @@ public class DbOpenHelper {
             public static final String TITLE = "title";
             public static final String CONTACT = "contact";
             public static final String DATE = "date";
+            public static final String HOUR = "hour";
+            public static final String MINUTE = "minute";
+            public static final String ISAM = "isam";
+            public static final String ALARMYN = "alarmyn";
             public static final String _TABLENAME = "calender";
             public static final String _CREATE =
                     "create table " + _TABLENAME + "("
                             + _ID + " integer primary key autoincrement, "
                             + TITLE + " text not null , "
                             + CONTACT + " text not null , "
-                            + DATE + " text not null );";
+                            + DATE + " text not null , "
+                            + HOUR + " int , "
+                            + MINUTE + " int , "
+                            + ISAM + " char(1) , "
+                            + ALARMYN + " char(1) );";
         }
     }
 
     // Insert DB
-    public long insertColumn(String title, String contact, String date) {
+    public long insertColumn(String title, String contact, String date, int hour, int minute, String isam,String alarmYn) {
         ContentValues values = new ContentValues();
         values.put(DataBases.CreateDB.TITLE, title);
         values.put(DataBases.CreateDB.CONTACT, contact);
         values.put(DataBases.CreateDB.DATE, date);
+        values.put(DataBases.CreateDB.HOUR, hour);
+        values.put(DataBases.CreateDB.MINUTE, minute);
+        values.put(DataBases.CreateDB.ISAM, isam);
+        values.put(DataBases.CreateDB.ALARMYN, alarmYn);
         return mDB.insert(DataBases.CreateDB._TABLENAME, null, values);
     }
 
     // Update DB
-    public boolean updateColumn(long id, String title, String contact, String date) {
+    public boolean updateColumn(long id, String title, String contact, String date, int hour, int minute, String isam,String alarmYn) {
         ContentValues values = new ContentValues();
         values.put(DataBases.CreateDB.TITLE, title);
         values.put(DataBases.CreateDB.CONTACT, contact);
         values.put(DataBases.CreateDB.DATE, date);
+        values.put(DataBases.CreateDB.HOUR, hour);
+        values.put(DataBases.CreateDB.MINUTE, minute);
+        values.put(DataBases.CreateDB.ISAM, isam);
+        values.put(DataBases.CreateDB.ALARMYN, alarmYn);
         return mDB.update(DataBases.CreateDB._TABLENAME, values, "_id=" + String.valueOf(id), null) > 0;
     }
 
@@ -142,5 +158,16 @@ public class DbOpenHelper {
                 cnt = cursor.getInt(0);
             }
         return cnt;
+    }
+
+    public void deleteAll(){
+        String query = "DELETE FROM " + DataBases.CreateDB._TABLENAME + " ";
+        Cursor cursor = mDB.rawQuery(query, null);
+        int cnt = 0;
+        if (null != cursor)
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                cnt = cursor.getInt(0);
+            }
     }
 }
